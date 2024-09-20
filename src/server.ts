@@ -22,13 +22,20 @@ async function sendToUnmanic(file: string, libraryId: number) {
       library_id: libraryId,
       type: "local",
     })
+    .then((result) => {
+      console.log("Unmanic added task", result.data);
+    })
     .catch((error) => {
-      console.error("Got error", { status: error.response.status, statusText: error.response.statusText });
+      console.error("Unmanic error", { status: error.response.status, statusText: error.response.statusText });
     });
 }
 
-function mapSonarrPath(path: string) {
+function mapSonarrPath(path: string): string {
   return path.replace(SONARR_MAPPING_FROM, SONARR_MAPPING_TO);
+}
+
+function mapRadarrPath(path: string): string {
+  return path.replace(RADARR_MAPPING_FROM, RADARR_MAPPING_TO);
 }
 
 app.get("/health", (req: Request, res: Response) => {
@@ -57,8 +64,17 @@ app.post("/sonarr", async (req: Request, res: Response) => {
 
   res.json({ status: 200 });
 });
+
 app.post("/radarr", async (req: Request, res: Response) => {
   switch (req.body.eventType) {
+    case "Download":
+      sendToUnmanic(
+        mapRadarrPath(req.body.movie.folderPath + "/" + req.body.movieFile.relativePath),
+        RADARR_LIBRARY_ID,
+      ).catch((error) => {
+        console.log(error);
+      });
+      break;
     default:
       console.log("POST /radarr", { body: req.body, params: req.params, json: JSON.stringify(req.body) });
       break;
