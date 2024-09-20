@@ -26,7 +26,11 @@ async function sendToUnmanic(file: string, libraryId: number) {
       console.log("Unmanic added task", result.data);
     })
     .catch((error) => {
-      console.error("Unmanic error", { status: error.response.status, statusText: error.response.statusText });
+      console.error("Unmanic error", {
+        status: error?.response?.status,
+        statusText: error?.response?.statusText,
+        error,
+      });
     });
 }
 
