@@ -47,6 +47,8 @@ app.get("/health", (req: Request, res: Response) => {
 });
 
 app.post("/sonarr", async (req: Request, res: Response) => {
+  console.log("POST /sonarr", { body: req.body, params: req.params, json: JSON.stringify(req.body) });
+
   switch (req.body.eventType) {
     case "Download":
       const data = {
@@ -62,7 +64,6 @@ app.post("/sonarr", async (req: Request, res: Response) => {
       }
       break;
     default:
-      console.log("POST /sonarr", { body: req.body, params: req.params, json: JSON.stringify(req.body) });
       break;
   }
 
@@ -70,6 +71,8 @@ app.post("/sonarr", async (req: Request, res: Response) => {
 });
 
 app.post("/radarr", async (req: Request, res: Response) => {
+  console.log("POST /radarr", { body: req.body, params: req.params, json: JSON.stringify(req.body) });
+
   switch (req.body.eventType) {
     case "Download":
       sendToUnmanic(
@@ -80,7 +83,6 @@ app.post("/radarr", async (req: Request, res: Response) => {
       });
       break;
     default:
-      console.log("POST /radarr", { body: req.body, params: req.params, json: JSON.stringify(req.body) });
       break;
   }
 
