@@ -31,6 +31,10 @@ function mapSonarrPath(path: string) {
   return path.replace(SONARR_MAPPING_FROM, SONARR_MAPPING_TO);
 }
 
+app.get("/health", (req: Request, res: Response) => {
+  res.send({ status: "ok" });
+});
+
 app.post("/sonarr", async (req: Request, res: Response) => {
   switch (req.body.eventType) {
     case "Download":
@@ -47,7 +51,16 @@ app.post("/sonarr", async (req: Request, res: Response) => {
       }
       break;
     default:
-      console.log("req", { body: req.body, params: req.params, json: JSON.stringify(req.body) });
+      console.log("POST /sonarr", { body: req.body, params: req.params, json: JSON.stringify(req.body) });
+      break;
+  }
+
+  res.json({ status: 200 });
+});
+app.post("/radarr", async (req: Request, res: Response) => {
+  switch (req.body.eventType) {
+    default:
+      console.log("POST /radarr", { body: req.body, params: req.params, json: JSON.stringify(req.body) });
       break;
   }
 
