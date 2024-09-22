@@ -3,6 +3,7 @@ import bodyParser from "body-parser";
 import axios from "axios";
 
 const UNMANIC_URL = process.env.UNMANIC_URL ?? "http://10.0.1.150:8888/unmanic";
+const LISTEN_PORT = process.env.LISTEN_PORT ? parseInt(process.env.LISTEN_PORT, 10) : 3000;
 
 const SONARR_LIBRARY_ID = process.env.SONARR_LIBRARY_ID ? parseInt(process.env.SONARR_LIBRARY_ID, 10) : 1;
 const SONARR_MAPPING_FROM = process.env.SONARR_MAPPING_FROM ?? "/data/Media/";
@@ -51,12 +52,15 @@ app.post("/sonarr", async (req: Request, res: Response) => {
 
   switch (req.body.eventType) {
     case "Download":
-      const data = {
-        files: req.body.episodeFiles.map((file: { relativePath: string }) => {
+      const data: { files: string[]; name: string } = { files: [], name: req.body?.release?.releaseTitle ?? "Unknown" };
+      if (req.body.episodeFiles) {
+        data.files = req.body.episodeFiles.map((file: { relativePath: string }) => {
           return mapSonarrPath(req.body.series.path + "/" + file.relativePath);
-        }),
-        name: req.body?.release?.releaseTitle,
-      };
+        });
+      }
+      if (req.body.episodeFile) {
+        data.files = [mapSonarrPath(req.body.series.path + "/" + req.body.episodeFile.relativePath)];
+      }
       for (const file of data.files) {
         sendToUnmanic(file, SONARR_LIBRARY_ID).catch((error) => {
           console.log(error);
@@ -89,6 +93,6 @@ app.post("/radarr", async (req: Request, res: Response) => {
   res.json({ status: 200 });
 });
 
-app.listen(3000, () => {
-  console.log(`Server is running on http://localhost:3000`);
+app.listen(LISTEN_PORT, () => {
+  console.log(`Server is running on port: ${LISTEN_PORT}`);
 });
