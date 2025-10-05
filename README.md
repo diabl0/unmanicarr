@@ -37,6 +37,8 @@ services:
      RADARR_MAPPING_FROM: "/data/Media/"
      RADARR_MAPPING_TO: "/media/"
 
+     DELAY: 60
+
 ```
 
 ## Explanation of the Settings
@@ -52,6 +54,9 @@ This is the Unmanic Library ID for Radarr media
 
 `RADARR_MAPPING_FROM` / `RADARR_MAPPING_TO`
 These settings define the mapping of directories from Radarr filesystem to Unmanic's filesystem.
+
+`DELAY`
+Time in secconds to delay actuall sending file to Wnmanic to avoid processing file before it's fully copied to new locatiom.
 
 
 ## Disclaimer

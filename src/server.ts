@@ -13,10 +13,17 @@ const RADARR_LIBRARY_ID = process.env.RADARR_LIBRARY_ID ? parseInt(process.env.R
 const RADARR_MAPPING_FROM = process.env.RADARR_MAPPING_FROM ?? "/data/Media/";
 const RADARR_MAPPING_TO = process.env.RADARR_MAPPING_TO ?? "/media/";
 
+const DELAY = process.env.DELAY ? parseInt(process.env.DELAY, 10) : 30;
+
+
 const app = express();
 app.use(bodyParser.json());
 
 async function sendToUnmanic(file: string, libraryId: number) {
+  // wait DELAY before actually sending to Unmanic
+  // to avoid processing file before it's fully saved
+  await new Promise((resolve) => setTimeout(resolve, DELAY*1000));
+
   return axios
     .post(UNMANIC_URL + "/api/v2/pending/create", {
       path: file,
